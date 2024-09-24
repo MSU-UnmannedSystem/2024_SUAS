@@ -1,0 +1,13 @@
+Idea for path solving algorithm:
+Think of the field as a grid
+X X X X X X
+X X X X X X
+X X X X X X
+X X X X X X
+H
+(H is homebase)
+1. Start at the bottom left and send drone to the far right
+2. Increase y by 1, and bring the drone back to the left
+3. Check the remaining battery
+4. If the battery is within a certain range, send it back to home base
+5. If battery is good, do another down and back, and check the battery again
