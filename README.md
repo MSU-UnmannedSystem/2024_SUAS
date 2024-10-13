@@ -6,7 +6,7 @@ and a side project that optimizes drone paths.
 
 Team Lead: "My name is Ozymandias, King of Kings; Look on my Works, ye Mighty, and despair!"
 
-###Dependancies
+### Dependancies
 
 - Python 3.6 (dronekit), python 3.11 (all other stuff)
 - dronekit
@@ -17,7 +17,7 @@ Team Lead: "My name is Ozymandias, King of Kings; Look on my Works, ye Mighty, a
 - pytorch (cuda 12.4 for Nvidia cards)
 - json
 
-###To Do Lists
+### To Do Lists
 
 - Pick a new camera
 - Connect Jetson Nano to internet
