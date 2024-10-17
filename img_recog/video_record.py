@@ -1,9 +1,13 @@
 import cv2
 
+# Constant
+cam_number = 1 # Change this if necessary
+frame_width, frame_height = 960, 540
+
 def main():
-    cam = cv2.VideoCapture(0)
-    frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cam = cv2.VideoCapture(cam_number, cv2.CAP_DSHOW)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter('webcam_output.mp4', fourcc, 20.0, (frame_width, frame_height))
