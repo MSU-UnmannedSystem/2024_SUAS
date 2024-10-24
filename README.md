@@ -16,6 +16,8 @@ YOLOv9, and a side project that optimizes drone paths when mapping over a field.
 - numpy
 - pytorch (cuda 12.4 for Nvidia cards)
 - json
+- math
+- matplotlib
 
 ### To Do Lists
 
