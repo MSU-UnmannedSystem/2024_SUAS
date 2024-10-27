@@ -1,0 +1,6 @@
+train: ../demo/train/images
+val: ../demo/valid/images
+test: ../demo/test/images
+
+nc: 1
+names: ['capy']
