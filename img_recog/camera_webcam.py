@@ -2,25 +2,26 @@ import ultralytics
 import torch
 import time
 import cv2
+import utils
 
 # Constant
-cam_number = 1 # Change this if necessary
+cam_number = 0 # Change this if necessary
 confidence_threshold = 0.5
 resized_frame_width, resized_frame_height = 960, 540
 
 # Common 16:9 resolutions
-""" 640 360	
-    854 480	
-    960 540	
-    1024 576	
-    1280 720	
-    1366 768	
-    1600 900	
-    1920 1080	
-    2560 1440	
-    3200 1800	
-    3840 2160	
-    5120 2880	
+""" 640 360
+    854 480
+    960 540
+    1024 57
+    1280 720
+    1366 768
+    1600 900
+    1920 1080
+    2560 1440
+    3200 1800
+    3840 2160
+    5120 2880
     7680 4320 """
 
 def configure_cuda():
@@ -59,7 +60,8 @@ def main():
         loop_counter += 1
 
         ret, frame = cam.read()
-        frame = cv2.resize(frame, (resized_frame_width, resized_frame_height))
+        # frame = cv2.resize(frame, (resized_frame_width, resized_frame_height))
+        frame = utils.img_resize(frame, resized_frame_width, resized_frame_height)
         results = model(frame, verbose = False, conf = confidence_threshold)
         
         # Extracting actual useful stuff for future use
