@@ -18,10 +18,4 @@ YOLOv9, and a side project that optimizes drone paths when mapping over a field.
 - json
 - math
 - matplotlib
-
-### To Do Lists
-
-- Pick a new camera
-- Connect Jetson Nano to internet
-- Test if YOLOv9 pretrained classes are good from top-down
-- Please add to the list~~
+- websockets
