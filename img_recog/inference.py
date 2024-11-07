@@ -1,14 +1,31 @@
 import ultralytics
 import cv2
-import utils
+
+def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
+    dim = None
+    (h, w) = image.shape[:2]
+
+    if width is None and height is None:
+        return image
+
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    resized = cv2.resize(image, dim, interpolation = inter)
+
+    return resized
 
 def main():
-    # Replace the image path with any custom image
     img = cv2.imread("capy.jpg")
-    img = utils.img_resize(img, width = 640)
+    img = resize(img, width = 640)
 
-    # Replace the path with any custom model
-    model = ultralytics.YOLO("datasets/demo/runs/detect/train/weights/best.pt")
+    # model = ultralytics.YOLO("datasets/demo/runs/detect/train/weights/best.pt")
+    model = ultralytics.YOLO("model/yolov9t.pt")
     
     results = model(img, verbose = False)
     annotated_img = results[0].plot()
@@ -20,6 +37,6 @@ def main():
             break
     
     cv2.destroyAllWindows()
-    
+
 if __name__ == "__main__":
     main()
