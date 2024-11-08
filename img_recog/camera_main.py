@@ -10,8 +10,9 @@ model = None
 
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
-RAW_WIDTH, RAW_HEIGHT = 3840, 2160
+RAW_WIDTH, RAW_HEIGHT = 2560, 1440
 FRAME_WIDTH, FRAME_HEIGHT = 960, 540
+SERVER_ENABLED = False
 SERVER_PORT = "8765"
 
 # Common 16:9 resolutions
@@ -68,7 +69,9 @@ def init():
         torch.device('cpu')
         print("CPU enabled")
     
-    model = ultralytics.YOLO("model/yolov9t.pt")
+    # model = ultralytics.YOLO("model/yolov9t.pt")
+    # model.export(format="ncnn")
+    model = ultralytics.YOLO("model/yolov9t_ncnn_model", task = "detect")
     print("Model loaded")
 
 def camera():
@@ -120,9 +123,10 @@ def camera():
             loop_counter = 0
             
             # Send detection result to server
-            if class_label != "":
-                message = class_label + "_" + " ".join(str(int(b)) for b in bbox)
-                asyncio.get_event_loop().run_until_complete(report(message))
+            if SERVER_ENABLED:
+                if class_label != "":
+                    message = class_label + "_" + " ".join(str(int(b)) for b in bbox)
+                    asyncio.get_event_loop().run_until_complete(report(message))
 
         loop_counter += 1
 
