@@ -10,8 +10,8 @@ model = None
 
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
-RAW_WIDTH, RAW_HEIGHT = 2560, 1440
-FRAME_WIDTH, FRAME_HEIGHT = 960, 540
+RAW_WIDTH, RAW_HEIGHT = 1920, 1080
+FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 SERVER_ENABLED = False
 SERVER_PORT = "8765"
 
@@ -69,8 +69,6 @@ def init():
         torch.device('cpu')
         print("CPU enabled")
     
-    # model = ultralytics.YOLO("model/yolov9t.pt")
-    # model.export(format="ncnn")
     model = ultralytics.YOLO("model/yolov9t_ncnn_model", task = "detect")
     print("Model loaded")
 
