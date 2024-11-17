@@ -19,4 +19,5 @@ YOLOv9, and a side project that optimizes drone paths when mapping over a field.
 - math
 - matplotlib
 - websockets
-- https://qengineering.eu/install-pytorch-on-jetson-nano.html
+- tensorflow
+- onnx and onnx-tf
