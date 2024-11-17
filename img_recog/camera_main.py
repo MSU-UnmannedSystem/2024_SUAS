@@ -4,6 +4,7 @@ import time
 import cv2
 import asyncio
 import websockets
+from ultralytics import YOLO
 
 # Global variabels
 model = None
@@ -69,7 +70,15 @@ def init():
         torch.device('cpu')
         print("CPU enabled")
     
-    model = ultralytics.YOLO("model/yolov9t_ncnn_model", task = "detect")
+    # Load PyTorch model
+    # model = YOLO("model/yolov9t.pt", task = "detect")
+
+    # Load NCNN model
+    #model = YOLO("model/yolov9t_ncnn_model", task = "detect")
+
+    # Load TFLite model
+    model = YOLO("model/yolov9t_tflite_model/yolov9t_float32.tflite", task = "detect")
+    
     print("Model loaded")
 
 def camera():
