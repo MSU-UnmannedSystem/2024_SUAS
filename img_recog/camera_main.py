@@ -63,12 +63,12 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
 def init():
     global model
 
-    try:
-        torch.cuda.set_device(0)
-        print("CUDA enabled")
-    except:
-        torch.device('cpu')
-        print("CPU enabled")
+    # try:
+    #     torch.cuda.set_device(0)
+    #     print("CUDA enabled")
+    # except:
+    #     torch.device('cpu')
+    #     print("CPU enabled")
     
     # Load PyTorch model
     # model = YOLO("model/yolov9t.pt", task = "detect")
