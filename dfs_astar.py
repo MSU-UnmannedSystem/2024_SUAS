@@ -4,9 +4,9 @@ import heapq
 # Graph has x axis pointing down and y axis is pointing right
 
 
-del_time = 0.1
+del_time = 0.4
 m, n = 15,20 # M: x-axis, N: y-axis
-sq_cost = 0.005 #Battery drain per square
+sq_cost = 0.009 #Battery drain per square
 battery = 1 #Total battery percentage
 first_cord = 0 #Holds the first coordinate
 last_cord = 0 #Holds the value of the last coordinate visited
@@ -206,8 +206,6 @@ def main():
     time.sleep(5)'''
 
     while found:
-            
-        print(field)
 
         g = update_graph(graph, field)
         
@@ -234,6 +232,7 @@ def main():
                 if((y == False) and (found == False)):
                     first_cord = (i,j)
                     found = True
+        battery -= sq_cost*(first_cord[0] + first_cord[1])
     
     print('Field have been fully covered!')
 
