@@ -1,9 +1,5 @@
-import ultralytics
-import torch
 import time
 import cv2
-import asyncio
-import websockets
 from ultralytics import YOLO
 
 # Global variabels
@@ -31,16 +27,6 @@ SERVER_PORT = "8765"
     5120 2880
     7680 4320 """
 
-async def report(message):
-    try:
-        async with websockets.connect(f"ws://localhost:{SERVER_PORT}") as websocket:
-            await websocket.send(message)
-            response = await websocket.recv()
-            return response
-    except:
-        print("Server not found")
-        exit()
-
 def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
     dim = None
     (h, w) = image.shape[:2]
@@ -62,23 +48,7 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
 
 def init():
     global model
-
-    # try:
-    #     torch.cuda.set_device(0)
-    #     print("CUDA enabled")
-    # except:
-    #     torch.device('cpu')
-    #     print("CPU enabled")
-    
-    # Load PyTorch model
-    # model = YOLO("model/yolov9t.pt", task = "detect")
-
-    # Load NCNN model
-    #model = YOLO("model/yolov9t_ncnn_model", task = "detect")
-
-    # Load TFLite model
     model = YOLO("model/yolov9t_tflite_model/yolov9t_float32.tflite", task = "detect")
-    
     print("Model loaded")
 
 def camera():
@@ -128,12 +98,6 @@ def camera():
             fps = loop_counter
             start_time = current_time
             loop_counter = 0
-            
-            # Send detection result to server
-            if SERVER_ENABLED:
-                if class_label != "":
-                    message = class_label + "_" + " ".join(str(int(b)) for b in bbox)
-                    asyncio.get_event_loop().run_until_complete(report(message))
 
         loop_counter += 1
 
