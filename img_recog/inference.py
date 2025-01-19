@@ -7,21 +7,6 @@ CONFIDENCE_THRESHOLD = 0.5
 RAW_WIDTH, RAW_HEIGHT = 1920, 1080
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 
-# Common 16:9 resolutions
-""" 640 360
-    854 480
-    960 540
-    1024 57
-    1280 720
-    1366 768
-    1600 900
-    1920 1080
-    2560 1440
-    3200 1800
-    3840 2160
-    5120 2880
-    7680 4320 """
-
 def main():
     # Load model
     model = YOLO("model/yolov9t.pt", task = "detect")
