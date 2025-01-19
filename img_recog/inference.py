@@ -9,7 +9,8 @@ FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 
 def main():
     # Load model
-    model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", task = "detect")
+    model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
+                 task = "detect")
 
     # Setup webcam with openCV
     cam = cv2.VideoCapture(0)
