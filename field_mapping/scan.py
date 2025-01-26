@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import random
 def main():
   im = cv2.resize(cv2.imread("field.jpg"),(500,500))
   
@@ -18,7 +19,7 @@ def main():
       print(l1,l1+100,l2,l2+100)
       print("hi,",im[l1:l1+100,l2:l2+100,:].shape)
 
-      s.scan(im[l1:l1+100,l2:l2+100,:],(j*5,i*5))
+      s.scan(im[l1:l1+100,l2:l2+100,:],((j*5)+(random.randrange(0,100)*0.01),(i*5)+(random.randrange(0,100)*0.01)))
       s.show()
       l1+=100
     l2+=100
@@ -45,13 +46,17 @@ class scanner():
     im = im.astype(np.float32)/255
     print("loc",loc,self.lloc)
 
-    ys = (loc[0]/self.cord)*500
+    ys = math.floor((loc[0]/self.cord)*self.height)
     ye = ys+self.sl
-    xs = (loc[1]/self.cord)*500
+    xs = math.floor((loc[1]/self.cord)*self.width)
     xe = xs+self.sl
-    self.l=[self.ys,self.ye,self.xs,self.xe]
+    self.l=[ys,ye,xs,xe]
     print(ys,ye,xs,xe)
-    self.field[int(ys):int(ye),int(xs):int(xe),:]=im
+    if((ys+100)>self.height):
+      im = im[:self.height-(ys+self.sl),:,:]
+    if((xs+100)>self.width):
+      im = im[:,:self.width-(xs+self.sl),:]
+    self.field[ys:ys+100,xs:xs+100,:]=im
 
   def show(self):
     plt.imshow(self.field)
