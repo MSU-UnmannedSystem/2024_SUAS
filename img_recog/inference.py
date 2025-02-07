@@ -9,11 +9,12 @@ FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 
 def main():
     # Load model
-    model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
-                 task = "detect")
+    # model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
+    #              task = "detect")
+    model = YOLO("model/yolov9t.pt")
 
     # Setup webcam with openCV
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(0, cv2.CAP_V4L2)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, RAW_WIDTH)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, RAW_HEIGHT)
 
@@ -33,6 +34,7 @@ def main():
             class_label = results[0].names[class_id]
             confidence = result.conf * 100
             bbox = result.xyxy[0].tolist()
+            print(class_label + " " + confidence)
             break
             
         # Show annotated frame with fps
@@ -44,8 +46,8 @@ def main():
                     fontScale   = 0.5,
                     thickness   = 1,
                     color       = (255, 0, 0))
-        
-        cv2.imshow("YOLOv9 inference result: press q to quit", annotated_frame)
+    
+        # cv2.imshow("YOLOv9 inference result: press q to quit", annotated_frame)
 
         # Calculate fps
         current_time = time.time()
