@@ -1,4 +1,3 @@
-import keyboard
 import time
 import cv2
 from ultralytics import YOLO
@@ -8,32 +7,45 @@ CONFIDENCE_THRESHOLD = 0.5
 RAW_WIDTH, RAW_HEIGHT = 640, 360
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC, SCREENSHOT_INTERVAL_SEC = 1, 10
+TAKE_SCREENSHOT = False
+MAX_INIT_CAMERA_ATTEMP = 10
 
 def main():
     # Load model
     model = YOLO("model/yolov9t.pt")
     # model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
     #               task = "detect")
-    print(f"Status:\tModel Loaded")
+    print("Status:\tModel Loaded")
 
-    # Setup webcam with openCV
-    cam = cv2.VideoCapture(0)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, RAW_WIDTH)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, RAW_HEIGHT)
+    # Setup webcam with openCV 
+    for attempt in range(MAX_INIT_CAMERA_ATTEMP):
+        print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
+        
+        cam = cv2.VideoCapture(0, cv2.CAP_V4L)
+        cam.set(cv2.CAP_PROP_FRAME_WIDTH, RAW_WIDTH)
+        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, RAW_HEIGHT)
+        
+        try:
+            _, frame = cam.read()
+            break
+        except:
+            cam.release()
+            cam = None
+            time.sleep(2)
 
-    print(f"Status:\tCamera On")
-    print(f"Frame:\t{FRAME_WIDTH}x{FRAME_HEIGHT}")
+    print("Status:\tCamera On")
+    print("Frame:\t{}x{}".format(FRAME_WIDTH, FRAME_HEIGHT))
+    print()
+    print("Ctrl + C to quit");
     print()
 
     loop_counter = current_time = fps = class_id = confidence = 0
     label_prev = class_label = ""
+    annotated_frame = None
     bbox = bboex_format = []
     start_time1 = start_time2 = base_time = time.time()
     
     while True:
-        if keyboard.is_pressed('q'):
-            break
-
         _, frame = cam.read()
         # frame = cv2.resize(frame, (FRAME_WIDTH, FRAME_HEIGHT))
         results = model(frame, verbose = False, conf = CONFIDENCE_THRESHOLD)
@@ -54,10 +66,14 @@ def main():
         
         # Only print to console when objects in frame changes
         if class_label != label_prev:
-            print(f"Name: {class_label}")
-            print(f"Bbox: {bboex_format}")
-            print(f"Conf: {confidence}%")
+            print("Name: {}".format(class_label))
+            print("Bbox: {}".format(bboex_format))
+            print("Conf: {}%".format(confidence))
             print()
+            
+            if annotated_frame is not None and TAKE_SCREENSHOT:
+                cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+            
         label_prev = class_label
             
         # Show annotated frame with fps
@@ -80,9 +96,9 @@ def main():
             loop_counter = 0
         
         # Save screenshot
-        if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC:
+        if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
             start_time2 = current_time
-            cv2.imwrite(f"screenshot/{int(current_time)}.png", annotated_frame)
+            cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
         loop_counter += 1
 
@@ -90,10 +106,11 @@ def main():
     cam.release()
     cv2.destroyAllWindows()
     runtime = int(current_time - base_time)
-
-    print(f"Status:\tCamera Off")
-    print(f"Uptime:\t{runtime} sec")
-    print(f"Speed:\t{fps} fps")
+    
 
 if __name__ == "__main__":
-    main()
+    try:
+	    main()
+    except KeyboardInterrupt:
+        print()
+        print("Status:\tCamera Off")
