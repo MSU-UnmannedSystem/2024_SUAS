@@ -1,3 +1,4 @@
+
 import time
 import cv2
 from ultralytics import YOLO
@@ -110,7 +111,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-	    main()
+        main()
     except KeyboardInterrupt:
-        print()
         print("Status:\tCamera Off")
