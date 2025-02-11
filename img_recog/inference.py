@@ -6,8 +6,11 @@ from ultralytics import YOLO
 CONFIDENCE_THRESHOLD = 0.5
 RAW_WIDTH, RAW_HEIGHT = 640, 360
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
-FPS_CALC_INTERVAL_SEC, SCREENSHOT_INTERVAL_SEC = 1, 10
+FPS_CALC_INTERVAL_SEC = 1
+SCREENSHOT_INTERVAL_SEC = 10
 TAKE_SCREENSHOT = False
+SHOW_INFERENCE_FRAME = False
+PRINT_INFERENCE_TERMINAL = True
 MAX_INIT_CAMERA_ATTEMP = 10
 
 def main():
@@ -21,7 +24,7 @@ def main():
     for attempt in range(MAX_INIT_CAMERA_ATTEMP):
         print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
         
-        cam = cv2.VideoCapture(0, cv2.CAP_V4L)
+        cam = cv2.VideoCapture(0)
         cam.set(cv2.CAP_PROP_FRAME_WIDTH, RAW_WIDTH)
         cam.set(cv2.CAP_PROP_FRAME_HEIGHT, RAW_HEIGHT)
         
@@ -49,6 +52,9 @@ def main():
         _, frame = cam.read()
         # frame = cv2.resize(frame, (FRAME_WIDTH, FRAME_HEIGHT))
         results = model(frame, verbose = False, conf = CONFIDENCE_THRESHOLD)
+        
+        if cv2.waitKey(1) == ord('q'):
+            break        
 
         if len(results[0].boxes) == 0:
             class_label = "Nothing"
@@ -65,10 +71,11 @@ def main():
             break
         
         # Only print to console when objects in frame changes
-        if class_label != label_prev:
+        if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
             print("Name: {}".format(class_label))
             print("Bbox: {}".format(bboex_format))
             print("Conf: {}%".format(confidence))
+            print("FPSs: {}fps".format(fps))
             print()
             
             if annotated_frame is not None and TAKE_SCREENSHOT:
@@ -85,8 +92,9 @@ def main():
                     fontScale   = 0.5,
                     thickness   = 1,
                     color       = (255, 0, 0))
-
-        cv2.imshow("YOLOv9 inference result: press q to quit", annotated_frame)
+		
+        if SHOW_INFERENCE_FRAME:
+            cv2.imshow("Inference result", annotated_frame)
 
         # Calculate fps
         current_time = time.time()
@@ -108,4 +116,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         cv2.destroyAllWindows()
+        print()
         print("Status:\tCamera Off")
