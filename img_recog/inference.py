@@ -7,7 +7,6 @@ cam = None
 
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
-RAW_WIDTH, RAW_HEIGHT = 640, 360
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC = 1
 SCREENSHOT_INTERVAL_SEC = 10
@@ -29,8 +28,8 @@ def main():
         print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
         
         cam = cv2.VideoCapture(0)
-        cam.set(cv2.CAP_PROP_FRAME_WIDTH, RAW_WIDTH)
-        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, RAW_HEIGHT)
+        cam.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
         
         try:
             _, frame = cam.read()
