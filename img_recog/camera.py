@@ -3,8 +3,8 @@ import cv2
 
 def main():
     cam = cv2.VideoCapture(0)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 2560)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
 
     loop_counter, start_time, current_time, fps = 0, 0, 0, 0
     
@@ -17,7 +17,6 @@ def main():
         loop_counter += 1
 
         ret, frame = cam.read()
-        frame = cv2.resize(frame, (960, 540))
 
         cv2.putText(img         = frame, 
                     text        = "FPS: " + str(fps), 

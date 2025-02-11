@@ -36,7 +36,7 @@ def main():
     print("Status:\tCamera On")
     print("Frame:\t{}x{}".format(FRAME_WIDTH, FRAME_HEIGHT))
     print()
-    print("Ctrl + C to quit");
+    print("Ctrl + C to quit")
     print()
 
     loop_counter = current_time = fps = class_id = confidence = 0
@@ -86,7 +86,7 @@ def main():
                     thickness   = 1,
                     color       = (255, 0, 0))
 
-        # cv2.imshow("YOLOv9 inference result: press q to quit", annotated_frame)
+        cv2.imshow("YOLOv9 inference result: press q to quit", annotated_frame)
 
         # Calculate fps
         current_time = time.time()
@@ -107,8 +107,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        # Close camera and openCV window
-        cam.release()
         cv2.destroyAllWindows()
-        runtime = int(current_time - base_time)
         print("Status:\tCamera Off")
