@@ -2,6 +2,9 @@ import time
 import cv2
 from ultralytics import YOLO
 
+# Global
+cam = None
+
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
 RAW_WIDTH, RAW_HEIGHT = 640, 360
@@ -21,6 +24,7 @@ def main():
     print("Status:\tModel Loaded")
 
     # Setup webcam with openCV 
+    global cam
     for attempt in range(MAX_INIT_CAMERA_ATTEMP):
         print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
         
@@ -110,11 +114,14 @@ def main():
 
         loop_counter += 1
     
+    print()
+    print("Status:\tCamera Off")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
+        cam.release()
         cv2.destroyAllWindows()
         print()
         print("Status:\tCamera Off")
