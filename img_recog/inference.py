@@ -101,15 +101,14 @@ def main():
             cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
         loop_counter += 1
-
-    # Close camera and openCV window
-    cam.release()
-    cv2.destroyAllWindows()
-    runtime = int(current_time - base_time)
     
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
+        # Close camera and openCV window
+        cam.release()
+        cv2.destroyAllWindows()
+        runtime = int(current_time - base_time)
         print("Status:\tCamera Off")
