@@ -49,7 +49,7 @@ def main():
     label_prev = class_label = ""
     annotated_frame = None
     bbox = bboex_format = []
-    start_time1 = start_time2 = base_time = time.time()
+    start_time1 = start_time2 = time.time()
     
     while True:
         _, frame = cam.read()
