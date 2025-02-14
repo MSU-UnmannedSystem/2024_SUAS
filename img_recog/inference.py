@@ -18,7 +18,7 @@ MAX_INIT_CAMERA_ATTEMP = 10
 def main():
     # Load model
     # model = YOLO("model/yolov9t.pt")
-    model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
+    model = YOLO("model/yolov11n_coral/yolo11n_int8.tflite", 
                   task = "detect")
     print("Status:\tModel Loaded")
 
