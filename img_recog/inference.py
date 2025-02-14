@@ -11,15 +11,15 @@ FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC = 1
 SCREENSHOT_INTERVAL_SEC = 10
 TAKE_SCREENSHOT = False
-SHOW_INFERENCE_FRAME = False
-PRINT_INFERENCE_TERMINAL = True
+SHOW_INFERENCE_FRAME = True
+PRINT_INFERENCE_TERMINAL = False
 MAX_INIT_CAMERA_ATTEMP = 10
 
 def main():
     # Load model
-    model = YOLO("model/yolov9t.pt")
-    # model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
-    #               task = "detect")
+    # model = YOLO("model/yolov9t.pt")
+    model = YOLO("model/yolov9t_edge_tpu_model/yolov9t_full_integer_quant_edgetpu.tflite", 
+                  task = "detect")
     print("Status:\tModel Loaded")
 
     # Setup webcam with openCV 
