@@ -16,10 +16,13 @@ PRINT_INFERENCE_TERMINAL = False
 MAX_INIT_CAMERA_ATTEMP = 10
 
 def main():
-    # Load model
+    # Load model using pure CPU
     # model = YOLO("model/yolov9t.pt")
-    model = YOLO("model/yolo11n_coral/yolo11n_full_integer_quant_edgetpu.tflite",
+    
+    # Load model using Coral Accelerator
+    model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
+                  
     print("Status:\tModel Loaded")
 
     # Setup webcam with openCV
