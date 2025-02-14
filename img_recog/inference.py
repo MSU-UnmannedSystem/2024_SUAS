@@ -18,11 +18,11 @@ MAX_INIT_CAMERA_ATTEMP = 10
 def main():
     # Load model
     # model = YOLO("model/yolov9t.pt")
-    model = YOLO("model/yolov11n_coral/yolo11n_int8.tflite", 
+    model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
     print("Status:\tModel Loaded")
 
-    # Setup webcam with openCV 
+    # Setup webcam with openCV
     global cam
     for attempt in range(MAX_INIT_CAMERA_ATTEMP):
         print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
