@@ -2,18 +2,36 @@ import time
 import cv2
 from ultralytics import YOLO
 
-# Global
-cam = None
+# Camera object that will init later
+camera = None
+
+# See model/coco.yaml for id & class
+valid_objects = [
+    67, # cell phone
+    68, # microwave
+    69, # oven
+    70, # toaster
+    71, # sink
+]
 
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC = 1
-SCREENSHOT_INTERVAL_SEC = 10
-TAKE_SCREENSHOT = True
+SCREENSHOT_INTERVAL_SEC = 5
+TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
 PRINT_INFERENCE_TERMINAL = True
-MAX_INIT_CAMERA_ATTEMP = 10
+INIT_CAMERA_ATTEMPT = 10
+IS_CENTER_TOLERANCE = 0.15
+
+def at_center(bbox: list):
+    x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
+    center_x = (x1 + abs(x2 - x1)) / FRAME_WIDTH
+    center_y = (y1 - abs(y2 - y1)) / FRAME_HEIGHT
+    x_true = abs(center_x - 0.5) <= IS_CENTER_TOLERANCE
+    y_true = abs(center_y - 0.5) <= IS_CENTER_TOLERANCE
+    return x_true and y_true
 
 def main():
     # Load model using pure CPU
@@ -22,31 +40,29 @@ def main():
     # Load model using Coral Accelerator
     model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
-                  
-    print("Status:\tModel Loaded")
+       
+    print("\nStatus:\tModel Loaded")
 
-    # Setup webcam with openCV
-    global cam
-    for attempt in range(MAX_INIT_CAMERA_ATTEMP):
-        print("Status:\tStarting camera attempt {} / {}".format(attempt, MAX_INIT_CAMERA_ATTEMP))
+    # Setup camera with opencv
+    global camera
+    for attempt in range(INIT_CAMERA_ATTEMPT):
+        print("Status:\tStarting Camera Attempt {} / {}".format(attempt, INIT_CAMERA_ATTEMPT))
         
-        cam = cv2.VideoCapture(0)
-        cam.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
-        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
+        camera = cv2.VideoCapture(0)
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
         
         try:
-            _, frame = cam.read()
+            _, frame = camera.read()
             break
         except:
-            cam.release()
-            cam = None
+            camera.release()
+            camera = None
             time.sleep(2)
 
     print("Status:\tCamera On")
-    print("Frame:\t{}x{}".format(FRAME_WIDTH, FRAME_HEIGHT))
-    print()
-    print("Ctrl + C to quit")
-    print()
+    print("Frame:\t{}x{}\n".format(FRAME_WIDTH, FRAME_HEIGHT))
+    print("Ctrl + C to Quit\n")
 
     loop_counter = current_time = fps = class_id = confidence = 0
     label_prev = class_label = ""
@@ -55,7 +71,7 @@ def main():
     start_time1 = start_time2 = time.time()
     
     while True:
-        _, frame = cam.read()
+        _, frame = camera.read()
         # frame = cv2.resize(frame, (FRAME_WIDTH, FRAME_HEIGHT))
         results = model(frame, verbose = False, conf = CONFIDENCE_THRESHOLD)
         
@@ -76,16 +92,21 @@ def main():
             bboex_format = [int(bbox[0]), int(bbox[2]), int(bbox[2]), int(bbox[3])]
             break
         
-        # Only print to console when objects in frame changes
-        if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
-            print("Name: {}".format(class_label))
-            print("Bbox: {}".format(bboex_format))
-            print("Conf: {}%".format(confidence))
-            print("FPSs: {}fps".format(fps))
-            print()
+        # Ignore objects not interested
+        if class_id in valid_objects:
+            # Only print to console when objects in frame changes
+            if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
+                print("Name: {}".format(class_label))
+                print("Conf: {}%\n".format(confidence))
             
+            # Save newly detected object screenshot
             if annotated_frame is not None and TAKE_SCREENSHOT:
                 cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+
+            # Move servo and drop item when object at frame center
+            if at_center(bboex_format):
+                print("Status:\tItem Dropped")
+                break
             
         label_prev = class_label
             
@@ -109,21 +130,19 @@ def main():
             start_time1 = current_time
             loop_counter = 0
         
-        # Save screenshot
+        # Save regular interval screenshot
         if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
             start_time2 = current_time
             cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
         loop_counter += 1
-    
-    print()
-    print("Status:\tCamera Off")
+
+    print("\nStatus:\tCamera Off")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        cam.release()
+        camera.release()
         cv2.destroyAllWindows()
-        print()
-        print("Status:\tCamera Off")
+        print("\nStatus:\tCamera Off")
