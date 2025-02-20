@@ -8,11 +8,11 @@ YOLOv9, and a side project that optimizes drone paths when mapping over a field.
 
 ### Dependancies
 
-- Python 3.6 (dronekit), python 3.11 (all other stuff)
+- Python 3.6 (dronekit)
+- python 3.11 (all other stuff)
 - dronekit
 - opencv-python
 - ultralytics
-- numpy
-- json
-- websockets
-- tensorflow
+- numpy==1.26.4
+- sockets
+- tflite-runtime
