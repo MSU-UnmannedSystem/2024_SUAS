@@ -7,11 +7,7 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    67, # cell phone
-    68, # microwave
-    69, # oven
-    70, # toaster
-    71, # sink
+    0, # person
 ]
 
 # Constant
@@ -100,13 +96,13 @@ def main():
                 print("Conf: {}%\n".format(confidence))
             
             # Save newly detected object screenshot
-            if annotated_frame is not None and TAKE_SCREENSHOT:
-                cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+            # if annotated_frame is not None and TAKE_SCREENSHOT:
+            #     cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
             # Move servo and drop item when object at frame center
-            if at_center(bboex_format):
-                print("Status:\tItem Dropped")
-                break
+            # if at_center(bboex_format):
+            #     print("Status:\tItem Dropped")
+            #     break
             
         label_prev = class_label
             
