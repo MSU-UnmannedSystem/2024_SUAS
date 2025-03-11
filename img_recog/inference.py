@@ -16,6 +16,7 @@ CONFIDENCE_THRESHOLD = 0.5
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC = 1
 SCREENSHOT_INTERVAL_SEC = 5
+USE_SOCKET = True
 TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
 PRINT_INFERENCE_TERMINAL = True
@@ -41,18 +42,19 @@ def main():
     print("\nStatus:\tModel Loaded")
 
     # Init socket server
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-    server_address = ('localhost', 12345)
-    server_socket.bind(server_address)
-    server_socket.listen(5)
-    print("\nServer Listening on {}".format(server_address))
-    client_socket, client_address = server_socket.accept()
-    print(f"Connection from {client_address}")
-    data = client_socket.recv(1024)
-    print(f"Server Received: {data.decode()}")
-    client_socket.send("Start Camera".encode())
-    client_socket.close()
-    server_socket.close()
+    if USE_SOCKET:
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        server_address = ('localhost', 12345)
+        server_socket.bind(server_address)
+        server_socket.listen(5)
+        print("\nServer Listening on {}".format(server_address))
+        client_socket, client_address = server_socket.accept()
+        print(f"Connection from {client_address}")
+        data = client_socket.recv(1024)
+        print(f"Server Received: {data.decode()}")
+        client_socket.send("Start Camera".encode())
+        client_socket.close()
+        server_socket.close()
 
     # Setup camera with opencv
     global camera
