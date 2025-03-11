@@ -8,7 +8,7 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    0, # person
+    67, # cell phone
 ]
 
 # Constant
@@ -21,7 +21,7 @@ TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
 PRINT_INFERENCE_TERMINAL = True
 INIT_CAMERA_ATTEMPT = 10
-IS_CENTER_TOLERANCE = 0.15
+IS_CENTER_TOLERANCE = 0.35
 
 def at_center(bbox: list):
     x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
@@ -47,14 +47,9 @@ def main():
         server_address = ('localhost', 12345)
         server_socket.bind(server_address)
         server_socket.listen(5)
-        print("\nServer Listening on {}".format(server_address))
+        print("\nServer Waiting on {}".format(server_address))
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")
-        data = client_socket.recv(1024)
-        print(f"Server Received: {data.decode()}")
-        client_socket.send("Start Camera".encode())
-        client_socket.close()
-        server_socket.close()
 
     # Setup camera with opencv
     global camera
@@ -118,8 +113,15 @@ def main():
 
             # Move servo and drop item when object at frame center
             if at_center(bboex_format):
+                if USE_SOCKET:
+                    try:
+                        client_socket.send("Item Dropped".encode())
+                    except:
+                        server_socket.close()
+                        client_socket.close()
+                
                 # Servo code here
-                pass
+                # break
             
         label_prev = class_label
             
