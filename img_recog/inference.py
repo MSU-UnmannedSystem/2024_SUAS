@@ -1,5 +1,6 @@
 import time
 import cv2
+import socket
 from ultralytics import YOLO
 
 # Camera object that will init later
@@ -39,10 +40,24 @@ def main():
        
     print("\nStatus:\tModel Loaded")
 
+    # Init socket server
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+    server_address = ('localhost', 12345)
+    server_socket.bind(server_address)
+    server_socket.listen(5)
+    print("\nServer Listening on {}".format(server_address))
+    client_socket, client_address = server_socket.accept()
+    print(f"Connection from {client_address}")
+    data = client_socket.recv(1024)
+    print(f"Server Received: {data.decode()}")
+    client_socket.send("Start Camera".encode())
+    client_socket.close()
+    server_socket.close()
+
     # Setup camera with opencv
     global camera
     for attempt in range(INIT_CAMERA_ATTEMPT):
-        print("Status:\tStarting Camera Attempt {} / {}".format(attempt, INIT_CAMERA_ATTEMPT))
+        print("\nStatus:\tStarting Camera Attempt {} / {}".format(attempt, INIT_CAMERA_ATTEMPT))
         
         camera = cv2.VideoCapture(0)
         camera.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
@@ -94,15 +109,15 @@ def main():
             if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
                 print("Name: {}".format(class_label))
                 print("Conf: {}%\n".format(confidence))
-            
+
             # Save newly detected object screenshot
-            # if annotated_frame is not None and TAKE_SCREENSHOT:
-            #     cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+            if annotated_frame is not None and TAKE_SCREENSHOT:
+                cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
             # Move servo and drop item when object at frame center
-            # if at_center(bboex_format):
-            #     print("Status:\tItem Dropped")
-            #     break
+            if at_center(bboex_format):
+                # Servo code here
+                pass
             
         label_prev = class_label
             
@@ -126,7 +141,7 @@ def main():
             start_time1 = current_time
             loop_counter = 0
         
-        # Save regular interval screenshot
+        # Save screenshot
         if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
             start_time2 = current_time
             cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
