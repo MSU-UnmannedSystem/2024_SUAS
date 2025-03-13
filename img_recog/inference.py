@@ -9,8 +9,6 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    64, # mouse
-    67, # cell phone
     39, # bottle
 ]
 
@@ -24,7 +22,7 @@ TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
 PRINT_INFERENCE_TERMINAL = False
 INIT_CAMERA_ATTEMPT = 10
-IS_CENTER_TOLERANCE = 0.35
+IS_CENTER_TOLERANCE = 0.30
 
 def at_center(bbox: list):
     x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
@@ -48,7 +46,7 @@ def main():
     model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
        
-    print("\Status:\tModel Loaded")
+    print("Status:\tModel Loaded")
     print("\nLooking for: {}".format(valid_objects))
 
     # Init socket server
@@ -132,7 +130,7 @@ def main():
                 
                 # Servo code here
                 servo.max()
-                time.sleep(2)
+                time.sleep(1)
                 print("\nItem Dropped")
                 break
             
