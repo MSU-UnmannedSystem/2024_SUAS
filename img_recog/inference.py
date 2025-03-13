@@ -1,6 +1,7 @@
 import time
 import cv2
 import socket
+from gpiozero import Servo
 from ultralytics import YOLO
 
 # Camera object that will init later
@@ -8,7 +9,9 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
+    64, # mouse
     67, # cell phone
+    39, # bottle
 ]
 
 # Constant
@@ -19,7 +22,7 @@ SCREENSHOT_INTERVAL_SEC = 5
 USE_SOCKET = True
 TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
-PRINT_INFERENCE_TERMINAL = True
+PRINT_INFERENCE_TERMINAL = False
 INIT_CAMERA_ATTEMPT = 10
 IS_CENTER_TOLERANCE = 0.35
 
@@ -32,6 +35,12 @@ def at_center(bbox: list):
     return x_true and y_true
 
 def main():
+    # Init servo
+    servo = Servo(11)
+    servo.min()
+    time.sleep(1)
+    print("\nStatus:\tServo Ready")
+	
     # Load model using pure CPU
     # model = YOLO("model/yolov9t.pt")
     
@@ -39,7 +48,8 @@ def main():
     model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
        
-    print("\nStatus:\tModel Loaded")
+    print("\Status:\tModel Loaded")
+    print("\nLooking for: {}".format(valid_objects))
 
     # Init socket server
     if USE_SOCKET:
@@ -49,12 +59,12 @@ def main():
         server_socket.listen(5)
         print("\nServer Waiting on {}".format(server_address))
         client_socket, client_address = server_socket.accept()
-        print(f"Connection from {client_address}")
+        print(f"Connection from {client_address}\n")
 
     # Setup camera with opencv
     global camera
     for attempt in range(INIT_CAMERA_ATTEMPT):
-        print("\nStatus:\tStarting Camera Attempt {} / {}".format(attempt, INIT_CAMERA_ATTEMPT))
+        print("Status:\tStarting Camera Attempt {} / {}".format(attempt, INIT_CAMERA_ATTEMPT))
         
         camera = cv2.VideoCapture(0)
         camera.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
@@ -121,7 +131,10 @@ def main():
                         client_socket.close()
                 
                 # Servo code here
-                # break
+                servo.max()
+                time.sleep(2)
+                print("\nItem Dropped")
+                break
             
         label_prev = class_label
             
