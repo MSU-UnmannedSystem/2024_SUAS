@@ -1,7 +1,6 @@
 import time
 import cv2
 import socket
-from gpiozero import Servo
 from ultralytics import YOLO
 
 # Camera object that will init later
@@ -9,7 +8,7 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    39, # bottle
+    64, # bottle
 ]
 
 # Constant
@@ -20,9 +19,9 @@ SCREENSHOT_INTERVAL_SEC = 5
 USE_SOCKET = True
 TAKE_SCREENSHOT = False
 SHOW_INFERENCE_FRAME = True
-PRINT_INFERENCE_TERMINAL = False
+PRINT_INFERENCE_TERMINAL = True
 INIT_CAMERA_ATTEMPT = 10
-IS_CENTER_TOLERANCE = 0.30
+IS_CENTER_TOLERANCE = 0.50
 
 def at_center(bbox: list):
     x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
@@ -32,13 +31,7 @@ def at_center(bbox: list):
     y_true = abs(center_y - 0.5) <= IS_CENTER_TOLERANCE
     return x_true and y_true
 
-def main():
-    # Init servo
-    servo = Servo(11)
-    servo.min()
-    time.sleep(1)
-    print("\nStatus:\tServo Ready")
-	
+def main():	
     # Load model using pure CPU
     # model = YOLO("model/yolov9t.pt")
     
@@ -46,7 +39,7 @@ def main():
     model = YOLO("model/yolov9t_coral/yolov9t_full_integer_quant_edgetpu.tflite",
                   task = "detect")
        
-    print("Status:\tModel Loaded")
+    print("\nStatus:\tModel Loaded")
     print("\nLooking for: {}".format(valid_objects))
 
     # Init socket server
@@ -107,34 +100,6 @@ def main():
             bbox = result.xyxy[0].tolist()
             bboex_format = [int(bbox[0]), int(bbox[2]), int(bbox[2]), int(bbox[3])]
             break
-        
-        # Ignore objects not interested
-        if class_id in valid_objects:
-            # Only print to console when objects in frame changes
-            if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
-                print("Name: {}".format(class_label))
-                print("Conf: {}%\n".format(confidence))
-
-            # Save newly detected object screenshot
-            if annotated_frame is not None and TAKE_SCREENSHOT:
-                cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
-
-            # Move servo and drop item when object at frame center
-            if at_center(bboex_format):
-                if USE_SOCKET:
-                    try:
-                        client_socket.send("Item Dropped".encode())
-                    except:
-                        server_socket.close()
-                        client_socket.close()
-                
-                # Servo code here
-                servo.max()
-                time.sleep(1)
-                print("\nItem Dropped")
-                break
-            
-        label_prev = class_label
             
         # Show annotated frame with fps
         annotated_frame = results[0].plot()
@@ -148,6 +113,31 @@ def main():
 		
         if SHOW_INFERENCE_FRAME:
             cv2.imshow("Inference result", annotated_frame)
+        
+        # Ignore objects not interested
+        if class_id in valid_objects:
+            # Only print to console when objects in frame changes
+            if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
+                print("\nName: {}".format(class_label))
+                print("Conf: {}%\n".format(confidence))
+
+            # Save newly detected object screenshot
+            if annotated_frame is not None and TAKE_SCREENSHOT:
+                cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+
+            # Move servo and drop item when object at frame center
+            if at_center(bboex_format):
+                if USE_SOCKET:
+                    try:
+                        client_socket.send("Drop".encode())
+                    except:
+                        server_socket.close()
+                        client_socket.close()
+                
+                print("\nItem Dropped")
+                break
+            
+        label_prev = class_label
 
         # Calculate fps
         current_time = time.time()

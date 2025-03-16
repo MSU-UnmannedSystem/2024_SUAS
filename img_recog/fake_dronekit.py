@@ -13,7 +13,7 @@ def connect():
 
 	# Wait until camera finds target
 	data = client_socket.recv(1024)
-	print("Received: {}".format(data.decode()))
+	print("Received from camera: {}".format(data.decode()))
 
 	client_socket.close()
 
