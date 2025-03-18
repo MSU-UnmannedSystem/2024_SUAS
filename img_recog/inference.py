@@ -8,17 +8,17 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    64, # bottle
+    0, # person
 ]
 
 # Constant
 CONFIDENCE_THRESHOLD = 0.5
 FRAME_WIDTH, FRAME_HEIGHT = 640, 360
 FPS_CALC_INTERVAL_SEC = 1
-SCREENSHOT_INTERVAL_SEC = 5
-USE_SOCKET = True
-TAKE_SCREENSHOT = False
-SHOW_INFERENCE_FRAME = True
+SCREENSHOT_INTERVAL_SEC = 10
+USE_SOCKET = False
+TAKE_SCREENSHOT = True
+SHOW_INFERENCE_FRAME = False
 PRINT_INFERENCE_TERMINAL = True
 INIT_CAMERA_ATTEMPT = 10
 IS_CENTER_TOLERANCE = 0.50
@@ -135,7 +135,6 @@ def main():
                         client_socket.close()
                 
                 print("\nItem Dropped")
-                break
             
         label_prev = class_label
 
