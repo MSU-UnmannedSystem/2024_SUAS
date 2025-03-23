@@ -8,7 +8,8 @@ camera = None
 
 # See model/coco.yaml for id & class
 valid_objects = [
-    0, # person
+    0,  # person
+    32, # sports ball
 ]
 
 # Constant
@@ -135,6 +136,7 @@ def main():
                         client_socket.close()
                 
                 print("\nItem Dropped")
+                # break
             
         label_prev = class_label
 
