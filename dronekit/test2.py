@@ -233,7 +233,6 @@ while True:
         current_location = vehicle.location.global_relative_frame
         target_location = LocationGlobalRelative(current_location.lat, current_location.lon, newalt)
 
-
         # Command the vehicle to go to the new altitude
         
         vehicle.simple_goto(target_location)
