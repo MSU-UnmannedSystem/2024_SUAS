@@ -89,6 +89,7 @@ def main():
             break        
 
         if len(results[0].boxes) == 0:
+            class_id = -1
             class_label = "Nothing"
             confidence = -1
             bboex_format = [-1, -1, -1, -1]
@@ -120,8 +121,8 @@ def main():
             # Only print to console when objects in frame changes
             if class_label != label_prev and PRINT_INFERENCE_TERMINAL:
                 print("\nName: {}".format(class_label))
-                print("Conf: {}%\n".format(confidence))
-
+                print("Conf: {}%".format(confidence))
+                
             # Save newly detected object screenshot
             if annotated_frame is not None and TAKE_SCREENSHOT:
                 cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
@@ -134,7 +135,11 @@ def main():
                     except:
                         server_socket.close()
                         client_socket.close()
-                
+
+                # If item aligned for drop, add comment text and save screenshot                            
+                if annotated_frame is not None and TAKE_SCREENSHOT:
+                    cv2.imwrite("screenshot/{}-dropped.png".format(int(current_time)), annotated_frame)
+
                 print("\nItem Dropped")
                 # break
             
@@ -148,9 +153,9 @@ def main():
             loop_counter = 0
         
         # Save screenshot
-        if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
-            start_time2 = current_time
-            cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+        # if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
+            # start_time2 = current_time
+            # cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
         loop_counter += 1
 
