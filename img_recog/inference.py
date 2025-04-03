@@ -138,7 +138,7 @@ def main():
 
                 # If item aligned for drop, add comment text and save screenshot                            
                 if annotated_frame is not None and TAKE_SCREENSHOT:
-                    cv2.imwrite("screenshot/{}-dropped.png".format(int(current_time)), annotated_frame)
+                    cv2.imwrite("screenshot/{}-drop.png".format(int(current_time)), annotated_frame)
 
                 print("\nItem Dropped")
                 # break
