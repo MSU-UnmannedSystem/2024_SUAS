@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description="Square mission with mode switching
 parser.add_argument("--connect", help="Vehicle connection target string")
 args = parser.parse_args()
 
-connection_string = args.connect if args.connect else "udp:172.17.208.1:14550"
+connection_string = "tcp:127.0.0.1:5762"
 
 # Home position (from SITL command)
 HOME_POSITION = (53.280707, -9.031534, 0)
