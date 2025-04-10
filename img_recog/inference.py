@@ -10,6 +10,7 @@ camera = None
 valid_objects = [
     0,  # person
     32, # sports ball
+    64, # laptop
 ]
 
 # Constant
@@ -153,9 +154,9 @@ def main():
             loop_counter = 0
         
         # Save screenshot
-        # if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
-            # start_time2 = current_time
-            # cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
+        if(current_time - start_time2) > SCREENSHOT_INTERVAL_SEC and TAKE_SCREENSHOT:
+            start_time2 = current_time
+            cv2.imwrite("screenshot/{}.png".format(int(current_time)), annotated_frame)
 
         loop_counter += 1
 
