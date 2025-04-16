@@ -125,6 +125,10 @@ vehicle = connect(connection_string, wait_ready=True, heartbeat_timeout=60, baud
 # time.sleep(2)
 # print_status()
 
+vehicle.commands.download()
+vehicle.commands.wait_ready()
+
+
 wait_for_waypoint(vehicle, 2)
 print_status()
 
@@ -161,10 +165,10 @@ wait_for_waypoint(vehicle, len(vehicle.commands)-1)
 print("\nMission complete")
 
 # Return to launch
-print("\nReturning to launch")
-vehicle.mode = VehicleMode("RTL")
-time.sleep(10)
-print_status()
+# print("\nReturning to launch")
+# vehicle.mode = VehicleMode("RTL")
+# time.sleep(10)
+# print_status()
 
 print("\nClosing connection")
 vehicle.close()
