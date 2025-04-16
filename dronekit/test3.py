@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description="Square mission with mode switching
 parser.add_argument("--connect", help="Vehicle connection target string")
 args = parser.parse_args()
 
-connection_string = "tcp:127.0.0.1:5762"
+connection_string = "/dev/ttyAMA0"
 
 # Home position (from SITL command)
 HOME_POSITION = (53.280707, -9.031534, 0)
@@ -110,20 +110,20 @@ def print_status():
 
 # Main execution
 print(f"Connecting to vehicle: {connection_string}")
-vehicle = connect(connection_string, wait_ready=True, heartbeat_timeout=60)
+vehicle = connect(connection_string, wait_ready=True, heartbeat_timeout=60, baud=57600)
 
 # Setup mission
-clear_mission()
-upload_mission()
+# clear_mission()
+# upload_mission()
 
 # Arm and takeoff
-arm_and_takeoff(FLIGHT_ALTITUDE)
+# arm_and_takeoff(FLIGHT_ALTITUDE)
 
 # Start mission
-print("\nStarting square mission in AUTO mode")
-vehicle.mode = VehicleMode("AUTO")
-time.sleep(2)
-print_status()
+# print("\nStarting square mission in AUTO mode")
+# vehicle.mode = VehicleMode("AUTO")
+# time.sleep(2)
+# print_status()
 
 wait_for_waypoint(vehicle, 2)
 print_status()
