@@ -10,7 +10,7 @@ camera = None
 valid_objects = [
     0,  # person
     32, # sports ball
-    64, # laptop
+    25, # umbrella
 ]
 
 # Constant
